@@ -1,0 +1,50 @@
+# Entornos y secretos (también en subcarpetas)
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+
+# React / Node
+node_modules/
+dist/
+build/
+coverage/
+.npmrc
+
+# Datos locales, adjuntos y respaldos
+*.sqlite3
+*.sqlite3-*
+*.sql
+*.dump
+*.backup
+media/
+staticfiles/
+backups/
+private/
+*.log
+
+# Editor / sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
