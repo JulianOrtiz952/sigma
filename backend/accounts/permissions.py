@@ -20,3 +20,10 @@ class IsAdministrator(BasePermission):
 
     def has_permission(self, request, view):
         return administrator_for(request.user) is not None
+
+
+class IsStudent(BasePermission):
+    message = "Esta acción requiere una cuenta estudiantil."
+
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role == "student" and hasattr(request.user, "student")

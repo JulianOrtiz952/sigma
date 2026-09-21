@@ -39,3 +39,28 @@
   y correo generado. Datos ficticios retirados sin eliminar datos del usuario.
 - Corrección detectada en pruebas: normalizar correos vacíos de administradores a NULL.
 - AGENTS.md conservado; ASSUMPTIONS.md y ADR documentan las decisiones aprobadas.
+
+## 2026-09-21 — Cursos, prerrequisitos, cupos y lista de espera
+
+- Materias vinculadas al pensum vigente de cada programa, con semestre, horas,
+  créditos y prerrequisitos académicos.
+- Validación backend: materias prerrequisito del mismo pensum y semestre inferior;
+  también se admite un mínimo de créditos aprobados.
+- Oferta separada en grupos con un único docente institucional, cupo positivo y
+  estados abierto, activo y finalizado.
+- Matrícula transaccional exclusiva para estudiantes: cupo confirmado hasta la
+  capacidad y lista de espera FIFO después de agotarla.
+- Activación administrativa rechazada sin al menos una matrícula confirmada.
+- Interfaz administrativa para crear y gestionar cursos; interfaz estudiantil para
+  consultar el pensum y solicitar cupo.
+- Se mantuvo pendiente RN-06; no se inventó una política de promoción al cancelar.
+- La consulta de usuarios, instituciones y cursos se separó de los formularios en
+  la sección administrativa Registros, con pestañas, contadores y búsqueda.
+- Grupos alfabéticos automáticos por materia y migración de los existentes a A.
+- Creación y edición dinámica de múltiples bloques semanales por grupo.
+- Validación de cruces de estudiantes y docentes; matrícula y promoción protegidas
+  por transacciones y bloqueos de base de datos.
+- Cancelación propia de matrícula o lista de espera, promoción FIFO con intercambio
+  ante choque y notificaciones internas detalladas.
+- Horario semanal gráfico para estudiantes y docentes; una cancelación confirmada
+  lo actualiza al retirar inmediatamente la materia.
