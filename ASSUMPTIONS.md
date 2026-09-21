@@ -27,12 +27,42 @@
 - Se utiliza sesión Django con cookies HttpOnly y CSRF. Docentes y estudiantes
   solo acceden a su propio perfil en esta etapa.
 
-## Pendiente antes de implementar matrículas
+## Pendiente para ampliar matrículas
 
-- Política para el primer estudiante no elegible en la lista de espera (RN-06).
 - Equivalencias académicas entre instituciones.
 - Verificación de propiedad de correos y recuperación de cuentas.
-- Currículos, cursos, grupos, horarios y matrículas.
+- Historial administrable y equivalencias.
+
+## Acordado con el usuario — 2026-09-21
+
+- La administración crea materias asociadas al pensum vigente de un programa.
+- Cada materia registra semestre, horas, créditos y prerrequisitos opcionales por
+  materias y/o mínimo de créditos aprobados.
+- Una materia prerrequisito debe ser del mismo pensum y de un semestre inferior.
+- La oferta inicial se crea abierta, con exactamente un docente de la misma
+  universidad y un cupo positivo definido por la administración.
+- Los únicos solicitantes de cupo son estudiantes del programa correspondiente.
+- Al agotarse el cupo, las solicitudes válidas se conservan en orden FIFO como
+  lista de espera y no cuentan como matrículas confirmadas.
+- Una oferta solo puede pasar a activa con docente y al menos un estudiante
+  confirmado; también puede finalizarse.
+
+## Decisiones técnicas de esta etapa
+
+- Se conserva la separación del dominio documentado: la materia `Course` contiene
+  información académica y el `Group` contiene docente, cupo, estado y ocupación.
+  La interfaz los presenta juntos bajo “Cursos”.
+- Mientras no exista una política de versiones históricas, cada programa tiene un
+  único pensum vigente. Relajar esa restricción requiere una decisión explícita.
+- Cada grupo admite uno o más bloques semanales con día, hora inicial y hora final.
+- Si el primer estudiante en espera tiene un choque al liberarse un cupo, intercambia
+  prioridad con el siguiente candidato, conserva su solicitud y recibe una
+  notificación con materia, día e intervalo exacto del cruce.
+- La promoción vuelve a validar pensum, prerrequisitos y créditos. Si se pierde
+  elegibilidad académica, se conserva la posición, se notifica y la promoción se
+  detiene: aún no se autorizó una política para saltar o retirar ese caso.
+- Cancelar una matrícula confirmada retira inmediatamente sus bloques del horario
+  personal y procesa la cola dentro de la misma transacción.
 
 ## Creación de correos
 

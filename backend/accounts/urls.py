@@ -1,13 +1,44 @@
 from django.urls import path
-from .views import LoginView, LogoutView, ProgramsView, SessionView, UniversitiesView, UsersView
+from .views import (
+    CoursesView,
+    CourseGroupsView,
+    EnrollmentCancelView,
+    EnrollmentRequestView,
+    GroupStatusView,
+    GroupConfigurationView,
+    LoginView,
+    LogoutView,
+    NotificationReadView,
+    NotificationsView,
+    PasswordChangeView,
+    ProfileView,
+    ProgramsView,
+    SessionView,
+    ScheduleView,
+    TeachersView,
+    UniversitiesView,
+    UsersView,
+)
 
 urlpatterns = [
-    path("auth/session/", SessionView.as_view()),
-    path("auth/login/", LoginView.as_view()),
-    path("auth/logout/", LogoutView.as_view()),
+    path("auth/session/", SessionView.as_view(), name="account-session"),
+    path("auth/login/", LoginView.as_view(), name="account-login"),
+    path("auth/logout/", LogoutView.as_view(), name="account-logout"),
+    path("auth/change-password/", PasswordChangeView.as_view(), name="account-password"),
+    path("profile/", ProfileView.as_view(), name="account-profile"),
     # Signup privado: solo la administración puede registrar cuentas.
     path("auth/signup/", UsersView.as_view()),
     path("users/", UsersView.as_view()),
     path("universities/", UniversitiesView.as_view()),
     path("programs/", ProgramsView.as_view()),
+    path("teachers/", TeachersView.as_view()),
+    path("courses/", CoursesView.as_view()),
+    path("courses/<int:course_id>/groups/", CourseGroupsView.as_view()),
+    path("groups/<int:group_id>/status/", GroupStatusView.as_view()),
+    path("groups/<int:group_id>/", GroupConfigurationView.as_view()),
+    path("groups/<int:group_id>/enroll/", EnrollmentRequestView.as_view()),
+    path("enrollments/<int:enrollment_id>/", EnrollmentCancelView.as_view()),
+    path("schedule/", ScheduleView.as_view()),
+    path("notifications/", NotificationsView.as_view()),
+    path("notifications/<int:notification_id>/read/", NotificationReadView.as_view()),
 ]

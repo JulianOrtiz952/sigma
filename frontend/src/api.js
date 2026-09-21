@@ -15,7 +15,10 @@ export async function api(path, { method = 'GET', body } = {}) {
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
   const data = await response.json().catch(() => ({ detail: 'El servidor no está disponible o la sesión caducó. Recarga la página.' }));
-  if (!response.ok) throw new Error(describeError(data));
+  if (!response.ok) {
+    if (data.code === 'password_change_required') window.dispatchEvent(new Event('sigma:password-required'));
+    throw new Error(describeError(data));
+  }
   if (data.csrfToken) csrfToken = data.csrfToken;
   return data;
 }

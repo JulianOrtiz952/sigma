@@ -7,7 +7,9 @@ Sistema Integral de Gestión de Matrículas Académicas.
 - Bienvenida y login con sesión Django.
 - Cuenta inicial `volcan`, administradora global, creada localmente con la
   contraseña suministrada por el propietario (no almacenada en el repositorio).
-- Navbar privada: Creación de usuarios y Universidades.
+- Navbar administrativa: Usuarios, Universidades, Cursos y Registros.
+- Registros centraliza en un directorio con búsqueda las cuentas, instituciones,
+  programas y cursos; los formularios de creación permanecen despejados.
 - Afiliación de universidades con dominio institucional y creación de programas.
 - Registro privado de docentes y estudiantes. Programa obligatorio para estudiantes.
 - Correo generado por el backend: `Andres Julian Ortiz Jaimes` + `ufps.edu.co`
@@ -15,6 +17,17 @@ Sistema Integral de Gestión de Matrículas Académicas.
 - Código = ID incremental del perfil; contraseña inicial = código, salvo que el
   administrador indique una personalizada. Se almacenan hashes, no texto plano.
 - Docentes y estudiantes ingresan con su correo y ven solo su propio perfil.
+- Creación administrativa de cursos por pensum, semestre, horas y créditos.
+- Un docente institucional y un cupo máximo por oferta; estados abierto, activo y finalizado.
+- Prerrequisitos por materias del mismo pensum y semestres inferiores, y/o créditos aprobados.
+- Matrícula estudiantil con control transaccional de cupo y lista de espera FIFO.
+- Activación bloqueada hasta contar con docente y al menos un estudiante confirmado.
+- Múltiples grupos por materia, identificados automáticamente como A, B, C, etc.
+- Bloques horarios semanales dinámicos por grupo y validación de cruces para
+  estudiantes y docentes.
+- Cancelación de matrícula o lista de espera, promoción elegible y notificaciones
+  internas cuando un choque impide asignar el cupo.
+- Horario semanal gráfico para estudiantes y docentes.
 
 ## Instalación
 
@@ -93,6 +106,12 @@ Para detener el clúster local cuando no esté en uso:
    ambos apellidos, universidad y programa cuando corresponda.
 5. Guardar. El resultado muestra correo y código. Entregar las credenciales al
    titular por un canal privado. El sistema no envía correos ni crea buzones.
+6. En Cursos, seleccionar universidad y programa, definir la materia, docente,
+   cupo y prerrequisitos. El curso se crea abierto.
+7. Los estudiantes solicitan cupo desde Cursos. La administración puede activar
+   la oferta cuando exista al menos una matrícula confirmada, o finalizarla.
+8. Consultar cuentas, instituciones y cursos desde Registros; usar sus pestañas y
+   buscador para evitar listas extensas dentro de los formularios.
 
 ## API
 
@@ -105,6 +124,15 @@ Para detener el clúster local cuando no esté en uso:
 | GET/POST /api/users/ | Mismo servicio administrativo de cuentas |
 | GET/POST /api/universities/ | Consulta del alcance permitido; alta solo global |
 | GET/POST /api/programs/ | Consulta/alta dentro del alcance institucional |
+| GET /api/teachers/ | Docentes del alcance institucional del administrador |
+| GET/POST /api/courses/ | Oferta autorizada por rol; alta solo administrativa |
+| POST /api/courses/:id/groups/ | Crea el siguiente grupo alfabético de una materia |
+| PATCH /api/groups/:id/ | Actualiza docente, cupo y bloques de un grupo |
+| PATCH /api/groups/:id/status/ | Cambio administrativo de estado con validación de activación |
+| POST /api/groups/:id/enroll/ | Solicitud estudiantil; confirma cupo o asigna lista de espera |
+| DELETE /api/enrollments/:id/ | Cancela una matrícula o solicitud propia |
+| GET /api/schedule/ | Horario del estudiante o docente autenticado |
+| GET /api/notifications/ | Novedades privadas del usuario autenticado |
 | GET /api/hello/ | Saludo público de compatibilidad, sin datos personales |
 
 Los POST autenticados exigen X-CSRFToken. El frontend obtiene el token al consultar
@@ -120,15 +148,15 @@ la sesión y lo actualiza después del login. Las contraseñas nunca se devuelve
 npm.cmd --prefix frontend run build
 ```
 
-Suite: 22 pruebas sobre correo, contraseñas, perfiles, duplicados, permisos,
-aislamiento institucional, CSRF, sesiones y limitación de intentos de login.
+Suite: 33 pruebas sobre correo, contraseñas, perfiles, permisos, aislamiento
+institucional, cursos, prerrequisitos, cupos, lista de espera, estados, CSRF,
+sesiones, grupos, horarios, cancelación, promoción y limitación de intentos de login.
 Las pruebas usan una base PostgreSQL separada y la eliminan al terminar.
 
 ## Alcance y seguridad
 
 `AGENTS.md` se mantiene íntegro. Consultar ASSUMPTIONS.md y docs/adr/ para decisiones.
-Esta etapa no incluye matrículas, currículos, horarios, recuperación de contraseña
-ni verificación de propiedad de correos. El código como contraseña inicial es la
+Esta etapa no incluye equivalencias, recuperación de contraseña ni verificación de propiedad de correos. El código como contraseña inicial es la
 política solicitada para esta etapa; debe revisarse antes de publicar en producción.
 
 Las sesiones duran hasta ocho horas y usan cookies HttpOnly/SameSite=Lax.
